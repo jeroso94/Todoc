@@ -15,20 +15,18 @@ import java.util.concurrent.Executor;
 public class MainViewModelFactory implements ViewModelProvider.Factory {
 
     private final TaskDataRepository mTaskDataSource;
-    private final ProjectDataRepository mProjectDataRepository;
     private final Executor mExecutor;
 
 
-    public MainViewModelFactory(TaskDataRepository taskDataSource, ProjectDataRepository projectDataSource, Executor executor) {
+    public MainViewModelFactory(TaskDataRepository taskDataSource, Executor executor) {
         mTaskDataSource = taskDataSource;
-        mProjectDataRepository = projectDataSource;
         mExecutor = executor;
     }
 
     @Override
     public <T extends ViewModel> T create(Class<T> modelClass) {
         if (modelClass.isAssignableFrom(MainViewModel.class)) {
-            return (T) new MainViewModel(mTaskDataSource, mProjectDataRepository, mExecutor);
+            return (T) new MainViewModel(mTaskDataSource, mExecutor);
         }
         throw new IllegalArgumentException("Unknown ViewModel class");
     }

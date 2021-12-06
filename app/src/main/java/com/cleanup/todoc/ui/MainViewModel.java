@@ -21,12 +21,10 @@ public class MainViewModel extends ViewModel {
 
     // REPOSITORIES
     private final TaskDataRepository mTaskDataSource;
-    private final ProjectDataRepository mProjectDataSource;
     private final Executor mExecutor;
 
-    public MainViewModel(TaskDataRepository taskDataSource,ProjectDataRepository projectDataSource, Executor executor){
+    public MainViewModel(TaskDataRepository taskDataSource, Executor executor){
         mTaskDataSource = taskDataSource;
-        mProjectDataSource = projectDataSource;
         this.mExecutor = executor;
     }
 

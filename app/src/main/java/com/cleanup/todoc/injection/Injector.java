@@ -19,19 +19,13 @@ public class Injector {
         return new TaskDataRepository(mDB.mTaskDao());
     }
 
-    public static ProjectDataRepository provideProjectDataSource(Context context) {
-        TodocDatabase mDB = TodocDatabase.getInstance(context);
-        return new ProjectDataRepository(mDB.mProjectDao());
-    }
-
     public static Executor provideExecutor(){ return Executors.newSingleThreadExecutor(); }
 
 
     public static MainViewModelFactory provideMainViewModelFactory(Context context) {
         TaskDataRepository mTaskDataSource = provideTaskDataSource(context);
-        ProjectDataRepository mProjectDataSource = provideProjectDataSource(context);
         Executor executor = provideExecutor();
 
-        return new MainViewModelFactory(mTaskDataSource, mProjectDataSource, executor);
+        return new MainViewModelFactory(mTaskDataSource, executor);
     }
 }
