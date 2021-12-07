@@ -11,6 +11,10 @@
         app:showAsAction="ifRoom">
         <menu>
             <item
+                android:id="@+id/filter_none"
+                android:title="@string/sort_none"
+                app:showAsAction="never|withText" />
+            <item
                 android:id="@+id/filter_alphabetical"
                 android:title="@string/sort_alphabetical"
                 app:showAsAction="never|withText" />

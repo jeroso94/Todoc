@@ -3,6 +3,7 @@
 
     <string name="label_action_filter">Filter</string>
 
+    <string name="sort_none">Aucun</string>
     <string name="sort_alphabetical">A -&gt; Z</string>
     <string name="sort_alphabetical_invert">Z -&gt; A</string>
     <string name="sort_oldest_first">Les plus anciens d’abord</string>

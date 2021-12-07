@@ -25,10 +25,12 @@ import com.cleanup.todoc.injection.MainViewModelFactory;
 import com.cleanup.todoc.R;
 import com.cleanup.todoc.model.Project;
 import com.cleanup.todoc.model.Task;
+import com.cleanup.todoc.repositories.TaskDataRepository;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 import static androidx.constraintlayout.widget.Constraints.TAG;
 
@@ -104,13 +106,7 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
         MainViewModelFactory mMainViewModelFactory = Injector.provideMainViewModelFactory(this);
         mMainViewModel = ViewModelProviders.of(this, mMainViewModelFactory).get(MainViewModel.class);
     }
-/**
- * IMPLEMENTATION SOURCée 140-ANDFUN AAC et 141-ANDFUN AAC
- MainViewModel viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
- viewModel.getAllTasks().observe(this, (tasks) -> {
- Log.d(TAG, "setupViewModel: Updating list of tasks from LiveData in ViewModel");
- adapter.updateTasks(tasks);});
- */
+
     /**
      * CREATE A NEW TASK -
      */
@@ -168,9 +164,6 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
                         taskName,
                         new Date().getTime()
                 );
-                Log.d(TAG, "onPositiveButtonClick: taskId " + id);
-                Log.d(TAG, "onPositiveButtonClick: SelectedProject "+taskProject.getId());
-                Log.d(TAG, "onPositiveButtonClick: task.getProjectId() "+task.getProjectId());
 
                 addTask(task);
 
@@ -196,38 +189,7 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
     private void addTask(@NonNull Task task) {
         //tasks.add(task);
         mMainViewModel.insertTask(task);
-        updateTasks();
-    }
-
-    /**
-     * Updates the list of tasks in the UI
-     */
-    private void updateTasks() {
-        if (tasks.size() == 0) {
-            lblNoTasks.setVisibility(View.VISIBLE);
-            listTasks.setVisibility(View.GONE);
-        } else {
-            lblNoTasks.setVisibility(View.GONE);
-            listTasks.setVisibility(View.VISIBLE);
-            switch (sortMethod) {
-                case ALPHABETICAL:
-                    Collections.sort(tasks, new Task.TaskAZComparator());
-                    break;
-                case ALPHABETICAL_INVERTED:
-                    Collections.sort(tasks, new Task.TaskZAComparator());
-                    break;
-                case RECENT_FIRST:
-                    Collections.sort(tasks, new Task.TaskRecentComparator());
-                    break;
-                case OLD_FIRST:
-                    Collections.sort(tasks, new Task.TaskOldComparator());
-                    break;
-                default:
-                    readAllTasks();
-
-            }
-            //adapter.updateTasks(tasks);
-        }
+        readAllTasks();
     }
 
     /**
@@ -237,6 +199,7 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
         mMainViewModel.getAllTasks().observe(this, (tasks) -> {
             Log.d(TAG, "setupViewModel: Updating list of tasks from LiveData in ViewModel");
             adapter.updateTasks(tasks);
+            updateTasks((ArrayList) tasks);
         });
     }
 
@@ -252,8 +215,9 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
     public void onDeleteTask(Task task) {
         //tasks.remove(task);
         mMainViewModel.deleteTask(task);
-        updateTasks();
+        readAllTasks();
     }
+
 
 
     /**
@@ -329,6 +293,7 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
     }
 
 
+
     /**
      * SORT THE LIST OF TASKS
      */
@@ -357,6 +322,57 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
          */
         NONE
     }
+
+    /**
+     * Updates the list of tasks in the UI
+     */
+    private void updateTasks(ArrayList tasks) {
+        if (tasks.size() == 0) {
+            lblNoTasks.setVisibility(View.VISIBLE);
+            listTasks.setVisibility(View.GONE);
+        } else {
+            lblNoTasks.setVisibility(View.GONE);
+            listTasks.setVisibility(View.VISIBLE);
+            switch (sortMethod) {
+                case ALPHABETICAL:
+                    Collections.sort(tasks, new Task.TaskAZComparator());
+                    break;
+                case ALPHABETICAL_INVERTED:
+                    Collections.sort(tasks, new Task.TaskZAComparator());
+                    break;
+                case RECENT_FIRST:
+                    Collections.sort(tasks, new Task.TaskRecentComparator());
+                    break;
+                case OLD_FIRST:
+                    Collections.sort(tasks, new Task.TaskOldComparator());
+                    break;
+                default:
+                    readAllTasks();
+            }
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.filter_none) {
+            sortMethod = SortMethod.NONE;
+        } else if (id == R.id.filter_alphabetical) {
+            sortMethod = SortMethod.ALPHABETICAL;
+        } else if (id == R.id.filter_alphabetical_inverted) {
+            sortMethod = SortMethod.ALPHABETICAL_INVERTED;
+        } else if (id == R.id.filter_oldest_first) {
+            sortMethod = SortMethod.OLD_FIRST;
+        } else if (id == R.id.filter_recent_first) {
+            sortMethod = SortMethod.RECENT_FIRST;
+        }
+
+        readAllTasks();
+
+        return super.onOptionsItemSelected(item);
+    }
+
 
 
     @Override
@@ -392,23 +408,6 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
         return true;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
 
-        if (id == R.id.filter_alphabetical) {
-            sortMethod = SortMethod.ALPHABETICAL;
-        } else if (id == R.id.filter_alphabetical_inverted) {
-            sortMethod = SortMethod.ALPHABETICAL_INVERTED;
-        } else if (id == R.id.filter_oldest_first) {
-            sortMethod = SortMethod.OLD_FIRST;
-        } else if (id == R.id.filter_recent_first) {
-            sortMethod = SortMethod.RECENT_FIRST;
-        }
-
-        updateTasks();
-
-        return super.onOptionsItemSelected(item);
-    }
 
 }
