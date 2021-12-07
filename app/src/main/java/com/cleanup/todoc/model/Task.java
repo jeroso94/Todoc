@@ -70,6 +70,12 @@ public class Task {
         this.setCreationTimestamp(creationTimestamp);
     }
 
+
+
+    /**
+     * GETTERS
+     */
+
     /**
      * Returns the unique identifier of the task.
      *
@@ -77,38 +83,6 @@ public class Task {
      */
     public long getId() {
         return id;
-    }
-
-    /**
-     * Sets the unique identifier of the task.
-     *
-     * @param id the unique idenifier of the task to set
-     */
-    private void setId(long id) {
-        this.id = id;
-    }
-
-    public long getProjectId() {
-        return projectId;
-    }
-
-    /**
-     * Sets the unique identifier of the project associated to the task.
-     *
-     * @param projectId the unique identifier of the project associated to the task to set
-     */
-    private void setProjectId(long projectId) {
-        this.projectId = projectId;
-    }
-
-    /**
-     * Returns the project associated to the task.
-     *
-     * @return the project associated to the task
-     */
-    @Nullable
-    public Project getProject() {
-        return Project.getProjectById(projectId);
     }
 
     /**
@@ -122,6 +96,44 @@ public class Task {
     }
 
     /**
+     * Returns the unique identifier of the related Project.
+     *
+     * @return the unique identifier of the related Project
+     */
+    public long getProjectId() {
+        return projectId;
+    }
+
+    /**
+     * Returns the project associated to the task.
+     *
+     * @return the project associated to the task
+     */
+    @Nullable
+    public Project getProject() {
+        return Project.getProjectById(projectId);
+    }
+
+    public long getCreationTimestamp() {
+        return creationTimestamp;
+    }
+
+
+
+    /**
+     * SETTERS
+     */
+
+    /**
+     * Sets the unique identifier of the task.
+     *
+     * @param id the unique idenifier of the task to set
+     */
+    private void setId(long id) {
+        this.id = id;
+    }
+
+    /**
      * Sets the name of the task.
      *
      * @param name the name of the task to set
@@ -130,8 +142,13 @@ public class Task {
         this.name = name;
     }
 
-    public long getCreationTimestamp() {
-        return creationTimestamp;
+    /**
+     * Sets the unique identifier of the project associated to the task.
+     *
+     * @param projectId the unique identifier of the project associated to the task to set
+     */
+    private void setProjectId(long projectId) {
+        this.projectId = projectId;
     }
 
     /**
@@ -142,6 +159,10 @@ public class Task {
     private void setCreationTimestamp(long creationTimestamp) {
         this.creationTimestamp = creationTimestamp;
     }
+
+    /**
+     * COMPARATORS
+     */
 
     /**
      * Comparator to sort task from A to Z
