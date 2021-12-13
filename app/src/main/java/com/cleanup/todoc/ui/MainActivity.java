@@ -189,18 +189,13 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
     private void addTask(@NonNull Task task) {
         //tasks.add(task);
         mMainViewModel.insertTask(task);
-        readAllTasks();
     }
 
     /**
      * READ TASKS
      */
     private void readAllTasks(){
-        mMainViewModel.getAllTasks().observe(this, (tasks) -> {
-            Log.d(TAG, "setupViewModel: Updating list of tasks from LiveData in ViewModel");
-            adapter.updateTasks(tasks);
-            updateTasks((ArrayList) tasks);
-        });
+        mMainViewModel.getAllTasks().observe(this, this::updateTaskList);
     }
 
     /**
@@ -215,7 +210,6 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
     public void onDeleteTask(Task task) {
         //tasks.remove(task);
         mMainViewModel.deleteTask(task);
-        readAllTasks();
     }
 
 
@@ -326,7 +320,7 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
     /**
      * Updates the list of tasks in the UI
      */
-    private void updateTasks(ArrayList tasks) {
+    private void updateTasks() {
         if (tasks.size() == 0) {
             lblNoTasks.setVisibility(View.VISIBLE);
             listTasks.setVisibility(View.GONE);
@@ -346,10 +340,15 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
                 case OLD_FIRST:
                     Collections.sort(tasks, new Task.TaskOldComparator());
                     break;
-                default:
-                    readAllTasks();
             }
+            adapter.updateTasks(tasks);
         }
+    }
+
+    private void updateTaskList(List<Task> tasks) {
+        this.tasks.clear();
+        this.tasks.addAll(tasks);
+        updateTasks();
     }
 
     @Override

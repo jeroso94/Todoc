@@ -26,7 +26,7 @@ public interface TaskDao {
     LiveData<List<Task>> getTasksByProjectId(long projectId);
 
     @Insert
-    long insertTask(Task tasks);
+    long insertTask(Task task);
 
     @Update
     int updateTask(Task task);
