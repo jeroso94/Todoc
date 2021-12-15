@@ -18,6 +18,7 @@ import org.junit.runner.RunWith;
 
 import java.util.List;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -27,20 +28,21 @@ import static org.junit.Assert.assertTrue;
 public class TaskDaoTest {
 
     // FOR DATA
-    private TodocDatabase database;
+    private TodocDatabase mDatabase;
 
     // DATA SET FOR TEST
-    private static long PROJECT_ID = 3L;
+    private static final long PROJECT_ID = 3L;
+    private static final Project PROJECT_DEMO = new Project(PROJECT_ID, "Circus", 0xFFA3CED2);
 
-    private static String TASK_NAME = "Vider le lave vaisselle";
-    private static Task NEW_TASK = new Task(999999L, PROJECT_ID, TASK_NAME, System.currentTimeMillis());
+    private static final String TASK_NAME = "Vider le lave vaisselle";
+    private static final Task NEW_TASK = new Task(999999L, PROJECT_ID, TASK_NAME, System.currentTimeMillis());
 
     @Rule
     public InstantTaskExecutorRule instantTaskExecutorRule = new InstantTaskExecutorRule();
 
     @Before
     public void initDb() throws Exception {
-        this.database = Room.inMemoryDatabaseBuilder(InstrumentationRegistry.getContext(),
+        mDatabase = Room.inMemoryDatabaseBuilder(InstrumentationRegistry.getContext(),
                 TodocDatabase.class)
                 .allowMainThreadQueries()
                 .build();
@@ -48,50 +50,82 @@ public class TaskDaoTest {
 
     @After
     public void closeDb() throws Exception {
-        database.close();
+        mDatabase.close();
     }
+
 
     /**
      * PROJECT
+     * 12/14 17:49:50: Test passed ! - insertAndGetProject()
+     *
+     * @throws InterruptedException
      */
     @Test
-    public void getProject() throws InterruptedException {
-        // TEST
-        Project project = LiveDataTestUtil.getValue(this.database.mProjectDao().getProjectById(PROJECT_ID));
-        assertTrue(project.getName().equals(project.getId() == PROJECT_ID));
+    public void insertAndGetProject() throws InterruptedException {
+        // WHEN : Adding a new project
+        mDatabase.mProjectDao().createProject(PROJECT_DEMO);
+        Project project = LiveDataTestUtil.getValue(mDatabase.mProjectDao().getProjectById(PROJECT_ID));
+
+        // THEN
+        assertTrue(project.getName().equals(PROJECT_DEMO.getName()) && project.getId() == PROJECT_ID);
     }
+
+
 
     /**
      * TASK
      */
+    /** 12/15 15:39:54: Launching 'getTasksWhenNoTask...()' - Test passed !
+     *
+     * @throws InterruptedException
+     */
     @Test
     public void getTasksWhenNoTaskInserted() throws InterruptedException {
-        // TEST
-        List<Task> tasks = LiveDataTestUtil.getValue(this.database.mTaskDao().getAllTasks());
+        // WHEN
+        List<Task> tasks = LiveDataTestUtil.getValue(mDatabase.mTaskDao().getAllTasks());
+
+        // THEN
         assertTrue(tasks.isEmpty());
     }
 
+
+    /** 12/15 15:49:13: Launching 'insertAndGetTasks()' - Test passed !
+     *
+     * @throws InterruptedException
+     */
     // Todo: Ajouter 2 tâches supplémentaires dans ce test
     @Test
     public void insertAndGetTasks() throws InterruptedException {
-        // BEFORE : Adding demo tasks
+        // GIVEN : Adding a new project to satisfy Foreign Key constraint
+        mDatabase.mProjectDao().createProject(PROJECT_DEMO);
 
-        this.database.mTaskDao().insertTask(NEW_TASK);
+        // WHEN
+        // Adding demo tasks
+        this.mDatabase.mTaskDao().insertTask(NEW_TASK);
+        List<Task> tasks = LiveDataTestUtil.getValue(mDatabase.mTaskDao().getAllTasks());
 
-        // TEST
-        List<Task> tasks = LiveDataTestUtil.getValue(this.database.mTaskDao().getAllTasks());
-        assertTrue(tasks.size() == 1);
+        // THEN
+        assertEquals(1, tasks.size());
     }
 
+    /** 12/15 16:08:07: Launching 'insertAndDeleteTask()' - Test passed !
+     *
+     * @throws InterruptedException
+     */
     @Test
     public void insertAndDeleteTask() throws InterruptedException {
-        // BEFORE : Adding demo task. Next, get the item added & delete it.
-        this.database.mTaskDao().insertTask(NEW_TASK);
-        Task taskAdded = LiveDataTestUtil.getValue(this.database.mTaskDao().getTasksByProjectId(PROJECT_ID)).get(0);
-        this.database.mTaskDao().deleteTask(taskAdded);
+        // GIVEN : Adding a new project to satisfy Foreign Key constraint
+        mDatabase.mProjectDao().createProject(PROJECT_DEMO);
 
-        //TEST
-        List<Task> tasks = LiveDataTestUtil.getValue(this.database.mTaskDao().getTasksByProjectId(PROJECT_ID));
+        // WHEN
+        // Adding demo task & Get it
+        this.mDatabase.mTaskDao().insertTask(NEW_TASK);
+        Task taskAdded = LiveDataTestUtil.getValue(mDatabase.mTaskDao().getTasksByProjectId(PROJECT_ID)).get(0);
+        // Delete the demo task
+        this.mDatabase.mTaskDao().deleteTask(taskAdded);
+        List<Task> tasks = LiveDataTestUtil.getValue(mDatabase.mTaskDao().getTasksByProjectId(PROJECT_ID));
+
+        //THEN
         assertTrue(tasks.isEmpty());
     }
 }
