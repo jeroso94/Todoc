@@ -9,6 +9,9 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Created by JeroSo94 on 24/11/2021.
+ * Cette classe est fournie par Google
+ * pour vous aider à plus facilement créer des tests impliquant le type LiveData,
+ * et surtout à bloquer l'exécution du test tant que le résultat n'est pas retourné.
  */
 public class LiveDataTestUtil {
     public static <T> T getValue(final LiveData<T> liveData) throws InterruptedException {
