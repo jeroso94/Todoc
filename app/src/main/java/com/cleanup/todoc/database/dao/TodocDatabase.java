@@ -63,12 +63,15 @@ public abstract class TodocDatabase extends RoomDatabase {
                         db.insert("Project", OnConflictStrategy.IGNORE, projectValues);
                     }
 
+                    /*
                     ContentValues taskValues = new ContentValues();
                     taskValues.put("projectId", 3L);
                     taskValues.put("name", "Nettoyer les vitres");
                     taskValues.put("creationTimestamp", System.currentTimeMillis());
 
                     db.insert("Task", OnConflictStrategy.IGNORE, taskValues);
+
+                     */
                 }
             };
         }

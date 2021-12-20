@@ -4,11 +4,13 @@ import android.view.View;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.test.InstrumentationRegistry;
 import androidx.test.rule.ActivityTestRule;
 import androidx.test.runner.AndroidJUnit4;
 
 import com.cleanup.todoc.ui.MainActivity;
 
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -34,6 +36,11 @@ import static org.junit.Assert.assertThat;
 public class MainActivityInstrumentedTest {
     @Rule
     public ActivityTestRule<MainActivity> rule = new ActivityTestRule<>(MainActivity.class);
+
+    @BeforeClass
+    public static void clean() {
+        InstrumentationRegistry.getTargetContext().deleteDatabase("MyDatabase.db");
+    }
 
     @Test
     public void addAndRemoveTask() {
@@ -120,5 +127,6 @@ public class MainActivityInstrumentedTest {
                 .check(matches(withText("zzz Tâche example")));
         onView(withRecyclerView(R.id.list_tasks).atPositionOnView(2, R.id.lbl_task_name))
                 .check(matches(withText("aaa Tâche example")));
+
     }
 }
