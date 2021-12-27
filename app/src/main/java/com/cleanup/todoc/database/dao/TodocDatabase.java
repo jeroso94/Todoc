@@ -40,7 +40,7 @@ public abstract class TodocDatabase extends RoomDatabase {
                                 .addCallback(prepopulateDatabase())
                                 .build();
 
-                        Log.d("TodocDatabase", "getInstance: Base créée");
+                        //Log.d("TodocDatabase", "getInstance: Base créée");
                     }
                 }
             }
