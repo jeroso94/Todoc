@@ -2,8 +2,6 @@ package com.cleanup.todoc.database.dao;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.util.Log;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.room.Database;
@@ -62,16 +60,6 @@ public abstract class TodocDatabase extends RoomDatabase {
                         projectValues.put("color", project.getColor());
                         db.insert("Project", OnConflictStrategy.IGNORE, projectValues);
                     }
-
-                    /*
-                    ContentValues taskValues = new ContentValues();
-                    taskValues.put("projectId", 3L);
-                    taskValues.put("name", "Nettoyer les vitres");
-                    taskValues.put("creationTimestamp", System.currentTimeMillis());
-
-                    db.insert("Task", OnConflictStrategy.IGNORE, taskValues);
-
-                     */
                 }
             };
         }

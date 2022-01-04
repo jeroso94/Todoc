@@ -5,6 +5,7 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.test.InstrumentationRegistry;
+import androidx.test.espresso.ViewAction;
 import androidx.test.rule.ActivityTestRule;
 import androidx.test.runner.AndroidJUnit4;
 
@@ -43,7 +44,7 @@ public class MainActivityInstrumentedTest {
     }
 
     @Test
-    public void addAndRemoveTask() {
+    public void addTask() {
         MainActivity activity = rule.getActivity();
         TextView lblNoTask = activity.findViewById(R.id.lbl_no_task);
         RecyclerView listTasks = activity.findViewById(R.id.list_tasks);
@@ -60,6 +61,19 @@ public class MainActivityInstrumentedTest {
         assertThat(listTasks.getAdapter().getItemCount(), equalTo(1));
 
         onView(withId(R.id.img_delete)).perform(click());
+    }
+
+    @Test
+    public void removeTask() {
+        MainActivity activity = rule.getActivity();
+        TextView lblNoTask = activity.findViewById(R.id.lbl_no_task);
+        RecyclerView listTasks = activity.findViewById(R.id.list_tasks);
+
+        onView(withId(R.id.fab_add_task)).perform(click());
+        onView(withId(R.id.txt_task_name)).perform(replaceText("Tâche example"));
+        onView(withId(android.R.id.button1)).perform(click());
+
+        onView(withId(R.id.img_delete)).perform(click());
 
         // Check that lblTask is displayed
         assertThat(lblNoTask.getVisibility(), equalTo(View.VISIBLE));
@@ -68,7 +82,7 @@ public class MainActivityInstrumentedTest {
     }
 
     @Test
-    public void sortTasks() {
+    public void sortTasksAlphabetical() {
         MainActivity activity = rule.getActivity();
 
         onView(withId(R.id.fab_add_task)).perform(click());
@@ -98,6 +112,35 @@ public class MainActivityInstrumentedTest {
         onView(withRecyclerView(R.id.list_tasks).atPositionOnView(2, R.id.lbl_task_name))
                 .check(matches(withText("zzz Tâche example")));
 
+        onView(withRecyclerView(R.id.list_tasks).atPositionOnView(2, R.id.img_delete))
+                .perform(click());
+        onView(withRecyclerView(R.id.list_tasks).atPositionOnView(1, R.id.img_delete))
+                .perform(click());
+        onView(withRecyclerView(R.id.list_tasks).atPositionOnView(0, R.id.img_delete))
+                .perform(click());
+    }
+
+    @Test
+    public void sortTasksAlphabeticalInverted() {
+        MainActivity activity = rule.getActivity();
+
+        onView(withId(R.id.fab_add_task)).perform(click());
+        onView(withId(R.id.txt_task_name)).perform(replaceText("aaa Tâche example"));
+        onView(withId(android.R.id.button1)).perform(click());
+        onView(withId(R.id.fab_add_task)).perform(click());
+        onView(withId(R.id.txt_task_name)).perform(replaceText("zzz Tâche example"));
+        onView(withId(android.R.id.button1)).perform(click());
+        onView(withId(R.id.fab_add_task)).perform(click());
+        onView(withId(R.id.txt_task_name)).perform(replaceText("hhh Tâche example"));
+        onView(withId(android.R.id.button1)).perform(click());
+
+        onView(withRecyclerView(R.id.list_tasks).atPositionOnView(0, R.id.lbl_task_name))
+                .check(matches(withText("aaa Tâche example")));
+        onView(withRecyclerView(R.id.list_tasks).atPositionOnView(1, R.id.lbl_task_name))
+                .check(matches(withText("zzz Tâche example")));
+        onView(withRecyclerView(R.id.list_tasks).atPositionOnView(2, R.id.lbl_task_name))
+                .check(matches(withText("hhh Tâche example")));
+
         // Sort alphabetical inverted
         onView(withId(R.id.action_filter)).perform(click());
         onView(withText(R.string.sort_alphabetical_invert)).perform(click());
@@ -108,9 +151,67 @@ public class MainActivityInstrumentedTest {
         onView(withRecyclerView(R.id.list_tasks).atPositionOnView(2, R.id.lbl_task_name))
                 .check(matches(withText("aaa Tâche example")));
 
+        onView(withRecyclerView(R.id.list_tasks).atPositionOnView(2, R.id.img_delete))
+                .perform(click());
+        onView(withRecyclerView(R.id.list_tasks).atPositionOnView(1, R.id.img_delete))
+                .perform(click());
+        onView(withRecyclerView(R.id.list_tasks).atPositionOnView(0, R.id.img_delete))
+                .perform(click());
+    }
+
+    @Test
+    public void sortTasksOldFirst() {
+        MainActivity activity = rule.getActivity();
+
+        onView(withId(R.id.fab_add_task)).perform(click());
+        onView(withId(R.id.txt_task_name)).perform(replaceText("aaa Tâche example"));
+        onView(withId(android.R.id.button1)).perform(click());
+        onView(withId(R.id.fab_add_task)).perform(click());
+        onView(withId(R.id.txt_task_name)).perform(replaceText("zzz Tâche example"));
+        onView(withId(android.R.id.button1)).perform(click());
+        onView(withId(R.id.fab_add_task)).perform(click());
+        onView(withId(R.id.txt_task_name)).perform(replaceText("hhh Tâche example"));
+        onView(withId(android.R.id.button1)).perform(click());
+
+        onView(withRecyclerView(R.id.list_tasks).atPositionOnView(0, R.id.lbl_task_name))
+                .check(matches(withText("aaa Tâche example")));
+        onView(withRecyclerView(R.id.list_tasks).atPositionOnView(1, R.id.lbl_task_name))
+                .check(matches(withText("zzz Tâche example")));
+        onView(withRecyclerView(R.id.list_tasks).atPositionOnView(2, R.id.lbl_task_name))
+                .check(matches(withText("hhh Tâche example")));
+
         // Sort old first
         onView(withId(R.id.action_filter)).perform(click());
         onView(withText(R.string.sort_oldest_first)).perform(click());
+        onView(withRecyclerView(R.id.list_tasks).atPositionOnView(0, R.id.lbl_task_name))
+                .check(matches(withText("aaa Tâche example")));
+        onView(withRecyclerView(R.id.list_tasks).atPositionOnView(1, R.id.lbl_task_name))
+                .check(matches(withText("zzz Tâche example")));
+        onView(withRecyclerView(R.id.list_tasks).atPositionOnView(2, R.id.lbl_task_name))
+                .check(matches(withText("hhh Tâche example")));
+
+        onView(withRecyclerView(R.id.list_tasks).atPositionOnView(2, R.id.img_delete))
+                .perform(click());
+        onView(withRecyclerView(R.id.list_tasks).atPositionOnView(1, R.id.img_delete))
+                .perform(click());
+        onView(withRecyclerView(R.id.list_tasks).atPositionOnView(0, R.id.img_delete))
+                .perform(click());
+    }
+
+    @Test
+    public void sortTasksRecentFirst() {
+        MainActivity activity = rule.getActivity();
+
+        onView(withId(R.id.fab_add_task)).perform(click());
+        onView(withId(R.id.txt_task_name)).perform(replaceText("aaa Tâche example"));
+        onView(withId(android.R.id.button1)).perform(click());
+        onView(withId(R.id.fab_add_task)).perform(click());
+        onView(withId(R.id.txt_task_name)).perform(replaceText("zzz Tâche example"));
+        onView(withId(android.R.id.button1)).perform(click());
+        onView(withId(R.id.fab_add_task)).perform(click());
+        onView(withId(R.id.txt_task_name)).perform(replaceText("hhh Tâche example"));
+        onView(withId(android.R.id.button1)).perform(click());
+
         onView(withRecyclerView(R.id.list_tasks).atPositionOnView(0, R.id.lbl_task_name))
                 .check(matches(withText("aaa Tâche example")));
         onView(withRecyclerView(R.id.list_tasks).atPositionOnView(1, R.id.lbl_task_name))
@@ -128,5 +229,11 @@ public class MainActivityInstrumentedTest {
         onView(withRecyclerView(R.id.list_tasks).atPositionOnView(2, R.id.lbl_task_name))
                 .check(matches(withText("aaa Tâche example")));
 
+        onView(withRecyclerView(R.id.list_tasks).atPositionOnView(2, R.id.img_delete))
+                .perform(click());
+        onView(withRecyclerView(R.id.list_tasks).atPositionOnView(1, R.id.img_delete))
+                .perform(click());
+        onView(withRecyclerView(R.id.list_tasks).atPositionOnView(0, R.id.img_delete))
+                .perform(click());
     }
 }

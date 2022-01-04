@@ -72,8 +72,8 @@ public class Task {
 
 
 
-    /**
-     * GETTERS
+    /*
+      GETTERS
      */
 
     /**
@@ -120,8 +120,8 @@ public class Task {
 
 
 
-    /**
-     * SETTERS
+    /*
+      SETTERS
      */
 
     /**
@@ -160,8 +160,8 @@ public class Task {
         this.creationTimestamp = creationTimestamp;
     }
 
-    /**
-     * COMPARATORS
+    /*
+      COMPARATORS
      */
 
     /**
